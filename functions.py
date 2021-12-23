@@ -36,3 +36,25 @@ def make_decision(normalized_squares):
             decided_square = i
         sum_prob += normalized_squares[i]
     return decided_square
+
+def move_ped(index, decided_square):
+#move pedestrian sideways
+    if ((decided_square == 2) or (decided_square == 5) or (decided_square == 8)):
+        ped[index][1][0] += 1
+    elif ((decided_square == 0) or (decided_square == 3) or (decided_square == 6)):
+        ped[index][1][0] -= 1
+    
+#move pedestrian up and down
+    if ((decided_square == 0) or (decided_square == 1) or (decided_square == 2)):
+        ped[index][1][1] -= 1
+    elif ((decided_square == 6) or (decided_square == 7) or (decided_square == 8)):
+        ped[index][1][1] += 1
+        
+def generate_ped(ped_list, min_ped, max_ped):
+    # Choose random nr pedestrians to be added, depending on given min and max conditions
+    nr_ped = random.randint(min_ped, max_ped)
+    for p in range(nr_ped):
+        start_pos = [random.randint(5, 15), random.randint(0,2)]
+        goal = [random.randint(0,20), random.randint(0,150)]
+        ped_list.append([goal, start_pos])
+    return ped_list
