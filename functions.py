@@ -49,6 +49,7 @@ def move_ped(ped_list, ped_ID, decided_square):
         ped_list[ped_ID][1][1] -= 1
     elif ((decided_square == 6) or (decided_square == 7) or (decided_square == 8)):
         ped_list[ped_ID][1][1] += 1
+    return ped_list
         
 def generate_ped(ped_list, min_ped, max_ped):
     # Choose random nr pedestrians to be added, depending on given min and max conditions
