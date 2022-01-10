@@ -64,7 +64,11 @@ def get_field(ped_list):
     potentials = []
     ped_list_array = np.array(ped_list)
     for ped in range(len(ped_list)):
-        M = np.zeros([20,150])
+        M = np.zeros([21,120]) #new grid size
+        M[7,51:82] = 1 #bench coords
+        M[10,98:105] = 1
+        M[15,51:82] = 1
+        M[12,98:105] = 1
         M[ped_list_array[:,1, 0], ped_list_array[:,1, 1]] = -1
         M[ped_list_array[ped,1, 0], ped_list_array[ped,1, 1]] = 0;
         M[ped_list_array[ped,0, 0], ped_list_array[ped,0, 1]] = 5; #goals, the value 5 is arbitrary
