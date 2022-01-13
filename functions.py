@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from numba import jit
 
 def laplace_eq(M):
     for n in range(150):
@@ -56,9 +57,28 @@ def generate_ped(ped_list, min_ped, max_ped):
     nr_ped = random.randint(min_ped, max_ped)
     for p in range(nr_ped):
         start_pos = [random.randint(5, 15), random.randint(0,2)]
-        goal = [random.randint(0,19), random.randint(0,118)]
+        while True:
+            goal_coord = np.random.exponential(scale = 1)
+            if goal_coord <= 1:
+                goal_coord = int(np.rint(118*goal_coord))
+                break
+            else:
+                pass
+        goal = [random.randint(0,19), goal_coord]
         ped_list.append([goal, start_pos])
     return ped_list
+
+@jit(nopython = True)
+def laplace_solve(M):
+    for n in range(50):
+        for j in range(len(M[0,:])-1):
+            for i in range(len(M[:,0])-1):
+                if M[i][j] != (1|-1):
+                    M[i,j] = 1/4 * (M[i-1][j] + M[i+1][j] + M[i][j-1] + M[i][j+1])
+                else:
+                    pass
+    return M
+    
 
 def get_field(ped_list):
     potentials = []
@@ -72,12 +92,5 @@ def get_field(ped_list):
         M[ped_list_array[:,1, 0], ped_list_array[:,1, 1]] = -1
         M[ped_list_array[pedest,1, 0], ped_list_array[pedest,1, 1]] = 0;
         M[ped_list_array[pedest,0, 0], ped_list_array[pedest,0, 1]] = 5; #goals, the value 5 is arbitrary
-        for n in range(50):
-            for j in range(len(M[0,:])-1):
-                for i in range(len(M[:,0])-1):
-                    if M[i][j] != (1|-1|5):
-                        M[i,j] = 1/4 * (M[i-1][j] + M[i+1][j] + M[i][j-1] + M[i][j+1])
-                    else:
-                        pass
-        potentials.append(M)
+        potentials.append(laplace_solve(M))
     return potentials
