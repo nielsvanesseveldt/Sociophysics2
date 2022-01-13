@@ -56,7 +56,7 @@ def generate_ped(ped_list, min_ped, max_ped):
     nr_ped = random.randint(min_ped, max_ped)
     for p in range(nr_ped):
         start_pos = [random.randint(5, 15), random.randint(0,2)]
-        goal = [random.randint(0,21), random.randint(0,120)]
+        goal = [random.randint(0,19), random.randint(0,118)]
         ped_list.append([goal, start_pos])
     return ped_list
 
