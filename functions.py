@@ -39,16 +39,19 @@ def make_decision(normalized_squares):
     return decided_square
 
 def move_ped(ped_list, ped_ID, decided_square):
-#move pedestrian sideways
-    if ((decided_square == 2) or (decided_square == 5) or (decided_square == 8)):
-        ped_list[ped_ID][1][0] += 1
-    elif ((decided_square == 0) or (decided_square == 3) or (decided_square == 6)):
-        ped_list[ped_ID][1][0] -= 1
+    x = ped_list[ped_ID][1][0]
+    y = ped_list[ped_ID][1][1]
     
+#move pedestrian sideways    
+    if (((decided_square == 2) or (decided_square == 5) or (decided_square == 8)) and (x < 120)):
+        ped_list[ped_ID][1][0] += 1
+    elif (((decided_square == 0) or (decided_square == 3) or (decided_square == 6)) and (x > 0)):
+        ped_list[ped_ID][1][0] -= 1
+        
 #move pedestrian up and down
-    if ((decided_square == 0) or (decided_square == 1) or (decided_square == 2)):
+    if (((decided_square == 0) or (decided_square == 1) or (decided_square == 2)) and (y > 0 )):
         ped_list[ped_ID][1][1] -= 1
-    elif ((decided_square == 6) or (decided_square == 7) or (decided_square == 8)):
+    elif (((decided_square == 6) or (decided_square == 7) or (decided_square == 8)) and (y < 21)):
         ped_list[ped_ID][1][1] += 1
     return ped_list
         
