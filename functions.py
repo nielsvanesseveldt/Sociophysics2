@@ -20,12 +20,12 @@ def get_prob(ped_list, ped_ID, field_list):
     # Get current Square:
     x = ped_list[ped_ID][1][0]
     y = ped_list[ped_ID][1][1]
-    tot = mp[y+1][x-1] + mp[y+1][x] + mp[y+1][x+1] + mp[y][x-1] + mp[y][x] + mp[y][x+1] + mp[y-1][x-1] + mp[y-1][x] + mp[y-1][x+1]
+    tot = np.exp(mp[y+1][x-1] + mp[y+1][x] + mp[y+1][x+1] + mp[y][x-1] + mp[y][x] + mp[y][x+1] + mp[y-1][x-1] + mp[y-1][x] + mp[y-1][x+1])
     squares = []
     for a in range(-1, 2):
         for b in range(-1, 2):
             # Will have to be changed to the exponential method mentioned by Corbetta
-            squares.append(mp[y+a][x+b]/tot)
+            squares.append(np.exp(mp[y+a][x+b])/tot)
     return squares
 
 def make_decision(normalized_squares):
@@ -97,8 +97,10 @@ def get_field(ped_list):
             M[:,-1] = -1
             M[7,51:82] = 1 #bench coords
             M[10,98:105] = 1
+            M[11,98:105] = -1
             M[15,51:82] = 1
             M[12,98:105] = 1
+            M[8:15,51:82] = -1
             M[ped_list_array[:,1, 0], ped_list_array[:,1, 1]] = -1
             M[ped_list_array[pedest,1, 0], ped_list_array[pedest,1, 1]] = 0
             M[ped_list_array[pedest,0, 0], ped_list_array[pedest,0, 1]] = 5 #goals, the value 5 is arbitrary
