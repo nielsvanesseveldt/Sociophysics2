@@ -59,7 +59,7 @@ def generate_ped(ped_list, min_ped, max_ped):
     # Choose random nr pedestrians to be added, depending on given min and max conditions
     nr_ped = random.randint(min_ped, max_ped)
     for p in range(nr_ped):
-        start_pos = [random.randint(, 11), random.randint(6,16)]
+        start_pos = [random.randint(0, 11), random.randint(6,16)]
         while True:
             goal_coord = np.random.exponential(scale = 1)
             if goal_coord <= 1:
