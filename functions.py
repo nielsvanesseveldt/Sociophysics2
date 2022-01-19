@@ -59,7 +59,6 @@ def generate_ped(c, ped_list, min_ped, max_ped):
     # Choose random nr pedestrians to be added, depending on given min and max conditions
     value = random.uniform(min_ped, max_ped)
     c = c + value
-    print(c)
     if c >= 1:
         c = 0
         start_pos = [random.randint(0, 11), random.randint(6,16)]
