@@ -20,12 +20,12 @@ def get_prob(ped_list, ped_ID, field_list):
     # Get current Square:
     x = ped_list[ped_ID][1][0]
     y = ped_list[ped_ID][1][1]
-    tot = np.exp(mp[y+1][x-1] + mp[y+1][x] + mp[y+1][x+1] + mp[y][x-1] + mp[y][x] + mp[y][x+1] + mp[y-1][x-1] + mp[y-1][x] + mp[y-1][x+1])
+    tot = mp[y+1][x-1] + mp[y+1][x] + mp[y+1][x+1] + mp[y][x-1] + mp[y][x] + mp[y][x+1] + mp[y-1][x-1] + mp[y-1][x] + mp[y-1][x+1]
     squares = []
     for a in range(-1, 2):
         for b in range(-1, 2):
             # Will have to be changed to the exponential method mentioned by Corbetta
-            squares.append(np.exp(mp[y+a][x+b])/tot)
+            squares.append(mp[y+a][x+b]/tot)
     return squares
 
 def make_decision(normalized_squares):
@@ -55,10 +55,13 @@ def move_ped(ped_list, ped_ID, decided_square):
         ped_list[ped_ID][1][1] += 1
     return ped_list
         
-def generate_ped(ped_list, min_ped, max_ped):
+def generate_ped(c, ped_list, min_ped, max_ped):
     # Choose random nr pedestrians to be added, depending on given min and max conditions
-    nr_ped = random.randint(min_ped, max_ped)
-    for p in range(nr_ped):
+    value = random.uniform(min_ped, max_ped)
+    c = c + value
+    print(c)
+    if c >= 1:
+        c = 0
         start_pos = [random.randint(0, 11), random.randint(6,16)]
         while True:
             goal_coord = np.random.exponential(scale = 1)
@@ -69,7 +72,7 @@ def generate_ped(ped_list, min_ped, max_ped):
                 pass
         goal = [random.randint(0,20), goal_coord]
         ped_list.append([goal, start_pos])
-    return ped_list
+    return ped_list, c
 
 @jit(nopython = True)
 def laplace_solve(M):
