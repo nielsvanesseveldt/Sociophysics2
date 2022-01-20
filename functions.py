@@ -69,7 +69,7 @@ def generate_ped(c, ped_list, min_ped, max_ped):
                 break
             else:
                 pass
-        goal = [random.randint(0,20), goal_coord]
+        goal = [ goal_coord, random.randint(0,20)]
         ped_list.append([goal, start_pos])
     return ped_list, c
 
