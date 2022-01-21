@@ -69,7 +69,7 @@ def generate_ped(c, ped_list, min_ped, max_ped):
                 break
             else:
                 pass
-        goal = [ goal_coord, random.randint(0,20)]
+        goal = [random.randint(0,20), goal_coord]
         ped_list.append([goal, start_pos])
     return ped_list, c
 
@@ -110,3 +110,90 @@ def get_field(ped_list):
         except:
             pass
     return potentials
+
+def get_field_new(ped_list):
+    potentials = []
+    ped_list_array = np.array(ped_list)
+    for pedest in range(len(ped_list)):
+        if all(i <= 20 for i in ped_list_array[:,1,0]):
+            M = np.zeros([21,120]) #new grid size
+            M[0,:] = -1 #boundaries
+            M[-1,:] = -1
+            M[:,0] = -1
+            M[:,-1] = -1
+            M[7,51:82] = 1 #bench coords
+            M[10,98:105] = 1
+            M[15,51:82] = 1
+            M[12,98:105] = 1
+            M[8:15,51:82] = -1
+            M[11,98:105] = -1
+            M[ped_list_array[:,1, 0], ped_list_array[:,1, 1]] = -1
+            M[ped_list_array[pedest,1, 0], ped_list_array[pedest,1, 1]] = 0
+            M[ped_list_array[pedest,0, 0], ped_list_array[pedest,0, 1]] = 5 #goals, the value 5 is arbitrary
+            potentials.append(laplace_solve(M))
+        elif not all(i <= 20 for i in ped_list_array[:,1,0]):
+            M = np.zeros([21,120]) #new grid size
+            M[0,:] = -1 #boundaries
+            M[-1,:] = -1
+            M[:,0] = -1
+            M[:,-1] = -1
+            M[7,51:82] = 1 #bench coords
+            M[10,98:105] = 1
+            M[15,51:82] = 1
+            M[12,98:105] = 1
+            M[8:15,51:82] = -1
+            M[11,98:105] = -1
+            M[ped_list_array[pedest,0, 0], ped_list_array[pedest,0, 1]] = 5 #goals, the value 5 is arbitrary
+            potentials.append(laplace_solve(M))            
+    return potentials
+
+def get_prob_new(ped_list, ped_ID, field_list):
+    # Get the specific distribution map
+    mp = field_list[ped_ID]
+    # Get current Square:
+    x = ped_list[ped_ID][1][0]
+    y = ped_list[ped_ID][1][1]
+    try:
+        tot = (np.exp(mp[y+1][x-1]) + np.exp(mp[y+1][x])
+               + 1*np.exp(mp[y+1][x+1]) + np.exp(mp[y][x-1]) + np.exp(mp[y][x])
+               + 4*np.exp(mp[y][x+1]) + np.exp(mp[y-1][x-1]) + np.exp(mp[y-1][x])
+               + np.exp(mp[y-1][x+1]))
+        squares = []
+        for a in range(-1, 2):
+            for b in range(-1, 2):
+                if (b==1) and (a ==0):
+                    # Will have to be changed to the exponential method mentioned by Corbetta
+                    squares.append((4*np.exp(mp[y+a][x+b]))/tot)
+                elif (b==1) and (a==1):
+                    squares.append((1*np.exp(mp[y+a][x+b]))/tot)
+                else:
+                    squares.append((np.exp(mp[y+a][x+b]))/tot)
+    except:
+        squares = [0,1,0,0,0,0,0,0,0]
+    return squares
+
+def move_ped_new(ped_list, ped_ID, decided_square):
+    x = ped_list[ped_ID][1][0]
+    y = ped_list[ped_ID][1][1]
+    
+#move pedestrian sideways    
+    if (((decided_square == 2) or (decided_square == 5) or (decided_square == 8)) and (x < 120)):
+        ped_list[ped_ID][1][0] += 1
+    elif (((decided_square == 0) or (decided_square == 3) or (decided_square == 6)) and (x > 0)):
+        ped_list[ped_ID][1][0] -= 1
+    elif x >= 120:
+        ped_list[ped_ID][1][0] -= 1
+    elif x <= 0:
+        ped_list[ped_ID][1][0] += 1
+        
+#move pedestrian up and down
+    if (((decided_square == 0) or (decided_square == 1) or (decided_square == 2)) and (y > 0 )):
+        ped_list[ped_ID][1][1] -= 1
+    elif (((decided_square == 6) or (decided_square == 7) or (decided_square == 8)) and (y < 20)):
+        ped_list[ped_ID][1][1] += 1
+    elif y >= 20:
+        ped_list[ped_ID][1][1] -= 1
+    elif y <= 0:
+        ped_list[ped_ID][1][1] += 1
+    #if (ped_list[ped_ID][1][0] in range(51,82)) and (ped_list[ped_ID][1][1] in range(51,82))
+    return ped_list
